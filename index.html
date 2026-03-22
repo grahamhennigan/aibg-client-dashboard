@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Client Dashboard — AI Business Growth</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0d14;
+    --surface: #111520;
+    --surface2: #161c2d;
+    --border: #1e2740;
+    --accent: #00d4ff;
+    --accent2: #3b82f6;
+    --green: #00e676;
+    --amber: #ffb300;
+    --red: #ff4444;
+    --text: #e8edf5;
+    --muted: #6b7a99;
+    --heading-font: 'Syne', sans-serif;
+    --body-font: 'DM Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body-font);
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ── Top Bar ── */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: var(--heading-font);
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .live-badge {
+    background: rgba(0, 230, 118, 0.12);
+    border: 1px solid rgba(0, 230, 118, 0.3);
+    color: var(--green);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .live-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--green);
+    animation: pulse 1.5s infinite;
+  }
+
+  .btn {
+    font-family: var(--body-font);
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 8px 18px;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #0a0d14;
+  }
+  .btn-primary:hover {
+    background: #33ddff;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+  .btn-report {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    font-size: 12px;
+    padding: 6px 14px;
+  }
+  .btn-report:hover {
+    background: rgba(0, 212, 255, 0.08);
+    border-color: var(--accent);
+  }
+
+  /* ── Layout ── */
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 32px;
+  }
+
+  .page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 32px;
+  }
+  .page-header h1 {
+    font-family: var(--heading-font);
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .page-header p {
+    color: var(--muted);
+    margin-top: 4px;
+    font-size: 14px;
+  }
+
+  /* ── Summary Strip ── */
+  .summary-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .summary-label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 8px;
+  }
+  .summary-value {
+    font-family: var(--heading-font);
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1px;
+  }
+  .summary-value.green { color: var(--green); }
+  .summary-value.amber { color: var(--amber); }
+  .summary-value.red { color: var(--red); }
+  .summary-value.accent { color: var(--accent); }
+
+  /* ── Filter Bar ── */
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .filter-label { color: var(--muted); font-size: 13px; }
+  .filter-btn {
+    font-family: var(--body-font);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background: rgba(0, 212, 255, 0.08);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .filter-btn.green-f.active { background: rgba(0,230,118,0.08); border-color: var(--green); color: var(--green); }
+  .filter-btn.amber-f.active { background: rgba(255,179,0,0.08); border-color: var(--amber); color: var(--amber); }
+  .filter-btn.red-f.active { background: rgba(255,68,68,0.08); border-color: var(--red); color: var(--red); }
+
+  /* ── Client Grid ── */
+  .clients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(580px, 1fr));
+    gap: 20px;
+  }
+
+  .client-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .client-card:hover {
+    border-color: rgba(0, 212, 255, 0.25);
+    transform: translateY(-1px);
+  }
+  .client-card.status-green { border-left: 3px solid var(--green); }
+  .client-card.status-amber { border-left: 3px solid var(--amber); }
+  .client-card.status-red   { border-left: 3px solid var(--red); }
+
+  .card-header {
+    padding: 20px 24px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .client-info { display: flex; align-items: center; gap: 14px; }
+  .client-avatar {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--heading-font);
+    font-size: 16px;
+    font-weight: 800;
+    color: #0a0d14;
+  }
+
+  .client-name {
+    font-family: var(--heading-font);
+    font-size: 17px;
+    font-weight: 700;
+  }
+  .client-trade {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .status-pill {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .status-pill::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+  }
+  .status-pill.green {
+    background: rgba(0,230,118,0.1);
+    color: var(--green);
+    border: 1px solid rgba(0,230,118,0.2);
+  }
+  .status-pill.green::before { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .status-pill.amber {
+    background: rgba(255,179,0,0.1);
+    color: var(--amber);
+    border: 1px solid rgba(255,179,0,0.2);
+  }
+  .status-pill.amber::before { background: var(--amber); }
+  .status-pill.red {
+    background: rgba(255,68,68,0.1);
+    color: var(--red);
+    border: 1px solid rgba(255,68,68,0.2);
+  }
+  .status-pill.red::before { background: var(--red); box-shadow: 0 0 6px var(--red); }
+
+  /* ── Services Tags ── */
+  .services-row {
+    padding: 14px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .service-tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--accent2);
+    border: 1px solid rgba(59,130,246,0.2);
+  }
+  .service-tag.chatbot   { background: rgba(0,212,255,0.08); color: var(--accent); border-color: rgba(0,212,255,0.2); }
+  .service-tag.followup  { background: rgba(139,92,246,0.1); color: #a78bfa; border-color: rgba(139,92,246,0.2); }
+  .service-tag.leadgen   { background: rgba(59,130,246,0.1); color: #60a5fa; border-color: rgba(59,130,246,0.2); }
+  .service-tag.website   { background: rgba(16,185,129,0.1); color: #34d399; border-color: rgba(16,185,129,0.2); }
+
+  /* ── Metrics ── */
+  .metrics-grid {
+    padding: 16px 24px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .metric {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .metric-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .metric-value {
+    font-family: var(--heading-font);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .metric-sub {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .metric-sub.up { color: var(--green); }
+  .metric-sub.down { color: var(--red); }
+
+  /* ── Footer Row ── */
+  .card-footer {
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .next-delivery {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .next-delivery strong { color: var(--text); }
+  .delivery-icon {
+    width: 28px; height: 28px;
+    background: var(--surface2);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+  }
+
+  .card-actions { display: flex; gap: 8px; }
+
+  /* ── Status Note ── */
+  .status-note {
+    padding: 10px 24px 0;
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .status-note.amber { color: #ffb30099; }
+  .status-note.red   { color: #ff444499; }
+
+  /* ── Empty State ── */
+  .empty-state {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 80px 40px;
+    color: var(--muted);
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
+  .empty-state h3 {
+    font-family: var(--heading-font);
+    font-size: 20px;
+    color: var(--text);
+    margin-bottom: 8px;
+    opacity: 0.6;
+  }
+
+  /* ── Add Client Modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 520px;
+    padding: 32px;
+    position: relative;
+    animation: modalIn 0.25s ease;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(16px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .modal h2 {
+    font-family: var(--heading-font);
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .modal-sub { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+  .modal-close {
+    position: absolute;
+    top: 20px; right: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .modal-close:hover { color: var(--text); border-color: var(--accent); }
+
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .form-input, .form-select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: var(--body-font);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .form-input:focus, .form-select:focus { border-color: var(--accent); }
+  .form-select option { background: var(--surface); }
+
+  .checkbox-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+  .checkbox-item:hover { border-color: var(--accent2); }
+  .checkbox-item input { accent-color: var(--accent); }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* ── Report Modal ── */
+  .report-modal {
+    max-width: 640px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .report-preview {
+    background: #fff;
+    color: #111;
+    border-radius: 12px;
+    padding: 32px;
+    margin: 20px 0;
+    font-family: var(--body-font);
+  }
+  .report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0;
+  }
+  .report-logo {
+    font-family: var(--heading-font);
+    font-size: 18px;
+    font-weight: 800;
+    color: #0a0d14;
+  }
+  .report-logo span { color: #0097b2; }
+  .report-date { font-size: 12px; color: #888; text-align: right; }
+  .report-title { font-size: 22px; font-weight: 800; margin-bottom: 4px; color: #0a0d14; font-family: var(--heading-font); }
+  .report-subtitle { font-size: 13px; color: #555; margin-bottom: 20px; }
+  .report-section { margin-bottom: 20px; }
+  .report-section h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 10px; font-weight: 600; }
+  .report-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .report-metric { background: #f8f9fb; border-radius: 8px; padding: 12px; }
+  .report-metric-val { font-size: 24px; font-weight: 800; color: #0a0d14; font-family: var(--heading-font); }
+  .report-metric-label { font-size: 11px; color: #888; margin-top: 2px; }
+  .report-status-block {
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .report-status-block.green { background: #f0fdf4; color: #16a34a; border-left: 4px solid #22c55e; }
+  .report-status-block.amber { background: #fffbeb; color: #d97706; border-left: 4px solid #f59e0b; }
+  .report-footer { font-size: 11px; color: #aaa; text-align: center; padding-top: 16px; border-top: 1px solid #f0f0f0; }
+  .report-services-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .report-service-tag { background: #eff6ff; color: #3b82f6; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 900px) {
+    .summary-strip { grid-template-columns: repeat(2, 1fr); }
+    .clients-grid  { grid-template-columns: 1fr; }
+    .metrics-grid  { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .container { padding: 20px 16px; }
+    .page-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .topbar { padding: 0 16px; }
+    .summary-strip { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Top Bar ── -->
+<header class="topbar">
+  <div class="logo">
+    <div class="logo-dot"></div>
+    AI Business Growth
+  </div>
+  <div class="topbar-right">
+    <span class="live-badge">Live Dashboard</span>
+    <button class="btn btn-primary" onclick="openModal('add-client')">+ Add Client</button>
+  </div>
+</header>
+
+<!-- ── Main ── -->
+<main class="container">
+  <div class="page-header">
+    <div>
+      <h1>Client Management</h1>
+      <p>Track service delivery, metrics, and monthly status across all active clients.</p>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-ghost" onclick="exportCSV()">⬇ Export CSV</button>
+    </div>
+  </div>
+
+  <!-- Summary Strip -->
+  <div class="summary-strip">
+    <div class="summary-card">
+      <div class="summary-label">Total Clients</div>
+      <div class="summary-value accent" id="stat-total">0</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">On Track</div>
+      <div class="summary-value green" id="stat-green">0</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Needs Attention</div>
+      <div class="summary-value amber" id="stat-amber">0</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">At Risk</div>
+      <div class="summary-value red" id="stat-red">0</div>
+    </div>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <span class="filter-label">Filter:</span>
+    <button class="filter-btn active" onclick="setFilter('all', this)">All Clients</button>
+    <button class="filter-btn green-f" onclick="setFilter('green', this)">🟢 On Track</button>
+    <button class="filter-btn amber-f" onclick="setFilter('amber', this)">🟡 Attention</button>
+    <button class="filter-btn red-f"   onclick="setFilter('red', this)">🔴 At Risk</button>
+  </div>
+
+  <!-- Client Cards -->
+  <div class="clients-grid" id="clients-grid">
+    <!-- populated by JS -->
+  </div>
+</main>
+
+<!-- ── Add Client Modal ── -->
+<div class="modal-overlay" id="modal-add-client">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('add-client')">✕</button>
+    <h2>Add New Client</h2>
+    <p class="modal-sub">Enter client details and configure their active services.</p>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Client / Business Name</label>
+        <input class="form-input" id="f-name" placeholder="e.g. Wright Glazing Ltd" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Trade / Industry</label>
+        <select class="form-select" id="f-trade">
+          <option value="Glazing / Windows & Doors">Glazing / Windows & Doors</option>
+          <option value="Building & Construction">Building & Construction</option>
+          <option value="Roofing">Roofing</option>
+          <option value="Landscaping & Gardens">Landscaping & Gardens</option>
+          <option value="Kitchen & Bathroom">Kitchen & Bathroom</option>
+          <option value="Plumbing & Heating">Plumbing & Heating</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Active Services</label>
+      <div class="checkbox-group">
+        <label class="checkbox-item"><input type="checkbox" id="s-chatbot" value="AI Lead Capture & Chatbot" /> AI Lead Capture & Chatbot</label>
+        <label class="checkbox-item"><input type="checkbox" id="s-followup" value="Automated Follow-Up" /> Automated Follow-Up</label>
+        <label class="checkbox-item"><input type="checkbox" id="s-leadgen" value="Meta & Google Lead Gen" /> Meta & Google Lead Gen</label>
+        <label class="checkbox-item"><input type="checkbox" id="s-website" value="Website Optimisation" /> Website Optimisation</label>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Monthly Status</label>
+        <select class="form-select" id="f-status">
+          <option value="green">🟢 On Track</option>
+          <option value="amber">🟡 Needs Attention</option>
+          <option value="red">🔴 At Risk</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Next Delivery Date</label>
+        <input class="form-input" id="f-delivery" type="date" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Status Note (optional)</label>
+      <input class="form-input" id="f-note" placeholder="e.g. Review scheduled for next Monday" />
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;">
+      <button class="btn btn-ghost" onclick="closeModal('add-client')">Cancel</button>
+      <button class="btn btn-primary" onclick="addClient()">Add Client →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Report Modal ── -->
+<div class="modal-overlay" id="modal-report">
+  <div class="modal report-modal">
+    <button class="modal-close" onclick="closeModal('report')">✕</button>
+    <h2>Client Report</h2>
+    <p class="modal-sub">Monthly performance summary ready to share with your client.</p>
+    <div id="report-content"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn btn-ghost" onclick="closeModal('report')">Close</button>
+      <button class="btn btn-primary" onclick="printReport()">🖨 Print / Save PDF</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────
+//  Data Store
+// ─────────────────────────────────────────
+const SERVICE_CLASSES = {
+  'AI Lead Capture & Chatbot': 'chatbot',
+  'Automated Follow-Up': 'followup',
+  'Meta & Google Lead Gen': 'leadgen',
+  'Website Optimisation': 'website',
+};
+
+const AVATAR_COLORS = ['#00d4ff','#3b82f6','#8b5cf6','#10b981','#f59e0b','#ef4444'];
+
+// Demo client — Wright Glazing
+let clients = [
+  {
+    id: 1,
+    name: 'Wright Glazing Ltd',
+    trade: 'Glazing / Windows & Doors',
+    services: ['AI Lead Capture & Chatbot', 'Automated Follow-Up', 'Website Optimisation'],
+    status: 'green',
+    note: 'All systems live and performing ahead of target.',
+    delivery: '2026-04-01',
+    metrics: {
+      leads: { value: '47', label: 'Leads This Month', sub: '▲ 23% vs last month', dir: 'up' },
+      response: { value: '<5m', label: 'Avg Response Time', sub: 'Automated', dir: 'up' },
+      reviews: { value: '12', label: 'New Reviews', sub: '▲ 4 vs last month', dir: 'up' },
+      reach: { value: '3.2k', label: 'Social Reach', sub: '↗ Growing', dir: 'up' },
+    },
+    avatarColor: '#00d4ff',
+  }
+];
+
+let currentFilter = 'all';
+let reportClientId = null;
+
+// ─────────────────────────────────────────
+//  Render
+// ─────────────────────────────────────────
+function render() {
+  const grid = document.getElementById('clients-grid');
+  const filtered = currentFilter === 'all' ? clients : clients.filter(c => c.status === currentFilter);
+
+  updateStats();
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <h3>${clients.length === 0 ? 'No clients yet' : 'No clients match this filter'}</h3>
+        <p>${clients.length === 0 ? 'Add your first client using the button above.' : 'Try a different filter.'}</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(c => clientCard(c)).join('');
+}
+
+function clientCard(c) {
+  const initials = c.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+  const statusLabels = { green: 'On Track', amber: 'Needs Attention', red: 'At Risk' };
+  const deliveryFmt = c.delivery ? new Date(c.delivery + 'T00:00:00').toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'}) : 'TBC';
+
+  const metricKeys = Object.keys(c.metrics);
+
+  return `
+  <div class="client-card status-${c.status}">
+    <div class="card-header">
+      <div class="client-info">
+        <div class="client-avatar" style="background:${c.avatarColor}20;color:${c.avatarColor};border:1px solid ${c.avatarColor}40;">
+          ${initials}
+        </div>
+        <div>
+          <div class="client-name">${c.name}</div>
+          <div class="client-trade">${c.trade}</div>
+        </div>
+      </div>
+      <div class="status-pill ${c.status}">${statusLabels[c.status]}</div>
+    </div>
+
+    ${c.note && c.status !== 'green' ? `<div class="status-note ${c.status}">⚠ ${c.note}</div>` : ''}
+    ${c.note && c.status === 'green' ? `<div class="status-note" style="color:#00e67655;padding-bottom:10px;">✓ ${c.note}</div>` : ''}
+
+    <div class="services-row">
+      ${c.services.map(s => `<span class="service-tag ${SERVICE_CLASSES[s]||''}">${s}</span>`).join('')}
+    </div>
+
+    <div class="metrics-grid">
+      ${metricKeys.map(k => {
+        const m = c.metrics[k];
+        return `
+        <div class="metric">
+          <span class="metric-label">${m.label}</span>
+          <span class="metric-value" style="color:${c.avatarColor}">${m.value}</span>
+          <span class="metric-sub ${m.dir||''}">${m.sub}</span>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div class="card-footer">
+      <div class="next-delivery">
+        <div class="delivery-icon">📅</div>
+        <div>Next Delivery <strong>${deliveryFmt}</strong></div>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-ghost" style="font-size:12px;padding:6px 12px;" onclick="openEditStatus(${c.id})">Edit Status</button>
+        <button class="btn btn-report" onclick="openReport(${c.id})">📄 Generate Report</button>
+        <button class="btn btn-ghost" style="font-size:12px;padding:6px 10px;color:#ff4444;border-color:#ff444430;" onclick="deleteClient(${c.id})" title="Remove client">✕</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─────────────────────────────────────────
+//  Stats
+// ─────────────────────────────────────────
+function updateStats() {
+  document.getElementById('stat-total').textContent = clients.length;
+  document.getElementById('stat-green').textContent = clients.filter(c => c.status === 'green').length;
+  document.getElementById('stat-amber').textContent = clients.filter(c => c.status === 'amber').length;
+  document.getElementById('stat-red').textContent   = clients.filter(c => c.status === 'red').length;
+}
+
+// ─────────────────────────────────────────
+//  Modals
+// ─────────────────────────────────────────
+function openModal(key) {
+  document.getElementById('modal-' + key).classList.add('open');
+  if (key === 'add-client') {
+    document.getElementById('f-delivery').value = new Date(Date.now() + 7*86400000).toISOString().split('T')[0];
+  }
+}
+function closeModal(key) {
+  document.getElementById('modal-' + key).classList.remove('open');
+}
+
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+});
+
+// ─────────────────────────────────────────
+//  Add Client
+// ─────────────────────────────────────────
+function addClient() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('Please enter a client name.'); return; }
+
+  const services = ['s-chatbot','s-followup','s-leadgen','s-website']
+    .filter(id => document.getElementById(id).checked)
+    .map(id => document.getElementById(id).value);
+
+  if (services.length === 0) { alert('Please select at least one service.'); return; }
+
+  const color = AVATAR_COLORS[clients.length % AVATAR_COLORS.length];
+
+  const newClient = {
+    id: Date.now(),
+    name,
+    trade: document.getElementById('f-trade').value,
+    services,
+    status: document.getElementById('f-status').value,
+    note: document.getElementById('f-note').value.trim(),
+    delivery: document.getElementById('f-delivery').value,
+    avatarColor: color,
+    metrics: buildDefaultMetrics(services),
+  };
+
+  clients.push(newClient);
+  closeModal('add-client');
+  resetForm();
+  render();
+}
+
+function buildDefaultMetrics(services) {
+  const m = {};
+  if (services.includes('AI Lead Capture & Chatbot')) {
+    m.leads = { value: '—', label: 'Leads Captured', sub: 'Awaiting data', dir: '' };
+    m.response = { value: '—', label: 'Avg Response', sub: 'Awaiting data', dir: '' };
+  }
+  if (services.includes('Automated Follow-Up')) {
+    m.followup = { value: '—', label: 'Follow-ups Sent', sub: 'Awaiting data', dir: '' };
+    m.conversion = { value: '—', label: 'Quote Conversion', sub: 'Awaiting data', dir: '' };
+  }
+  if (services.includes('Meta & Google Lead Gen')) {
+    m.impressions = { value: '—', label: 'Ad Impressions', sub: 'Awaiting data', dir: '' };
+    m.cpl = { value: '—', label: 'Cost per Lead', sub: 'Awaiting data', dir: '' };
+  }
+  if (services.includes('Website Optimisation')) {
+    m.traffic = { value: '—', label: 'Website Traffic', sub: 'Awaiting data', dir: '' };
+    m.reviews = { value: '—', label: 'New Reviews', sub: 'Awaiting data', dir: '' };
+  }
+  // Fill to at least 4 slots
+  while (Object.keys(m).length < 4) {
+    const k = 'metric_' + Object.keys(m).length;
+    m[k] = { value: '—', label: 'Metric', sub: 'Awaiting data', dir: '' };
+  }
+  return m;
+}
+
+function resetForm() {
+  ['f-name','f-note'].forEach(id => document.getElementById(id).value = '');
+  ['s-chatbot','s-followup','s-leadgen','s-website'].forEach(id => document.getElementById(id).checked = false);
+  document.getElementById('f-status').value = 'green';
+}
+
+// ─────────────────────────────────────────
+//  Edit Status (inline quick-edit)
+// ─────────────────────────────────────────
+function openEditStatus(id) {
+  const c = clients.find(x => x.id === id);
+  if (!c) return;
+  const statuses = ['green','amber','red'];
+  const labels = { green: '🟢 On Track', amber: '🟡 Needs Attention', red: '🔴 At Risk' };
+  const current = c.status;
+  const next = statuses[(statuses.indexOf(current) + 1) % 3];
+  if (confirm(`Change ${c.name} status from "${labels[current]}" to "${labels[next]}"?`)) {
+    c.status = next;
+    render();
+  }
+}
+
+// ─────────────────────────────────────────
+//  Delete
+// ─────────────────────────────────────────
+function deleteClient(id) {
+  const c = clients.find(x => x.id === id);
+  if (c && confirm(`Remove ${c.name} from the dashboard?`)) {
+    clients = clients.filter(x => x.id !== id);
+    render();
+  }
+}
+
+// ─────────────────────────────────────────
+//  Filter
+// ─────────────────────────────────────────
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+// ─────────────────────────────────────────
+//  Report Generation
+// ─────────────────────────────────────────
+function openReport(id) {
+  reportClientId = id;
+  const c = clients.find(x => x.id === id);
+  if (!c) return;
+
+  const now = new Date();
+  const month = now.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+  const today = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  const statusText = { green: 'All services are performing on track this month.', amber: 'Some areas require attention — see notes below.', red: 'Immediate action required on key service areas.' };
+  const statusColour = c.status;
+  const deliveryFmt = c.delivery ? new Date(c.delivery + 'T00:00:00').toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'}) : 'TBC';
+
+  const metricsHTML = Object.values(c.metrics).slice(0, 4).map(m => `
+    <div class="report-metric">
+      <div class="report-metric-val">${m.value}</div>
+      <div class="report-metric-label">${m.label}</div>
+    </div>`).join('');
+
+  const html = `
+  <div class="report-preview" id="printable-report">
+    <div class="report-header">
+      <div>
+        <div class="report-logo">AI<span> Business</span> Growth</div>
+        <div style="font-size:11px;color:#888;margin-top:2px;">aibusinessgrowth.uk</div>
+      </div>
+      <div class="report-date">
+        <strong style="color:#111;font-size:14px;">${c.name}</strong><br/>
+        Monthly Report — ${month}<br/>
+        Generated: ${today}
+      </div>
+    </div>
+
+    <div class="report-section">
+      <div class="report-status-block ${statusColour}">
+        ${statusText[statusColour]}
+        ${c.note ? `<div style="margin-top:6px;font-weight:400;font-size:13px;">${c.note}</div>` : ''}
+      </div>
+    </div>
+
+    <div class="report-section">
+      <h4>Active Services</h4>
+      <div class="report-services-list">
+        ${c.services.map(s => `<span class="report-service-tag">${s}</span>`).join('')}
+      </div>
+    </div>
+
+    <div class="report-section">
+      <h4>Key Metrics — ${month}</h4>
+      <div class="report-metrics">${metricsHTML}</div>
+    </div>
+
+    <div class="report-section">
+      <h4>Next Delivery</h4>
+      <p style="font-size:14px;color:#444;">Your next scheduled delivery / review is <strong>${deliveryFmt}</strong>.</p>
+    </div>
+
+    <div class="report-section" style="border-top:1px solid #f0f0f0;padding-top:16px;">
+      <h4>What's Working Well</h4>
+      <ul style="font-size:13px;color:#444;padding-left:20px;line-height:1.8;">
+        ${c.services.map(s => `<li>${s} — active and delivering results</li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="report-footer">
+      Prepared by AI Business Growth · aibusinessgrowth.uk · graham@aibusinessgrowth.uk<br/>
+      This report is confidential and prepared exclusively for ${c.name}.
+    </div>
+  </div>`;
+
+  document.getElementById('report-content').innerHTML = html;
+  openModal('report');
+}
+
+function printReport() {
+  const content = document.getElementById('printable-report').innerHTML;
+  const win = window.open('', '_blank');
+  win.document.write(`
+    <!DOCTYPE html><html><head>
+    <title>Client Report — AI Business Growth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <style>
+      body { font-family: 'DM Sans', sans-serif; margin: 0; padding: 32px; background: #fff; color: #111; }
+      .report-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; padding-bottom:20px; border-bottom:2px solid #f0f0f0; }
+      .report-logo { font-family:'Syne',sans-serif; font-size:20px; font-weight:800; }
+      .report-logo span { color:#0097b2; }
+      .report-date { font-size:12px; color:#888; text-align:right; }
+      h4 { font-size:12px; text-transform:uppercase; letter-spacing:0.5px; color:#888; margin-bottom:10px; font-weight:600; }
+      .report-section { margin-bottom:20px; }
+      .report-metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+      .report-metric { background:#f8f9fb; border-radius:8px; padding:12px; }
+      .report-metric-val { font-size:24px; font-weight:800; color:#0a0d14; font-family:'Syne',sans-serif; }
+      .report-metric-label { font-size:11px; color:#888; margin-top:2px; }
+      .report-status-block { padding:12px 16px; border-radius:8px; font-size:14px; font-weight:600; margin-bottom:12px; }
+      .report-status-block.green { background:#f0fdf4; color:#16a34a; border-left:4px solid #22c55e; }
+      .report-status-block.amber { background:#fffbeb; color:#d97706; border-left:4px solid #f59e0b; }
+      .report-status-block.red   { background:#fef2f2; color:#dc2626; border-left:4px solid #ef4444; }
+      .report-services-list { display:flex; flex-wrap:wrap; gap:6px; }
+      .report-service-tag { background:#eff6ff; color:#3b82f6; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:500; }
+      .report-footer { font-size:11px; color:#aaa; text-align:center; padding-top:16px; border-top:1px solid #f0f0f0; margin-top:24px; }
+      ul { font-size:13px; color:#444; padding-left:20px; line-height:1.8; }
+      @media print { body { padding: 0; } }
+    </style>
+    </head><body>${content}</body></html>`);
+  win.document.close();
+  setTimeout(() => win.print(), 500);
+}
+
+// ─────────────────────────────────────────
+//  Export CSV
+// ─────────────────────────────────────────
+function exportCSV() {
+  const rows = [['Client','Trade','Services','Status','Next Delivery','Note']];
+  clients.forEach(c => rows.push([
+    c.name, c.trade, c.services.join(' | '), c.status, c.delivery, c.note
+  ]));
+  const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'clients-' + new Date().toISOString().split('T')[0] + '.csv';
+  a.click();
+}
+
+// ─────────────────────────────────────────
+//  Init
+// ─────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
