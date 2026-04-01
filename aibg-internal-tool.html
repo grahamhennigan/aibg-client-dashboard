@@ -447,31 +447,14 @@
         </div>
 
         <div class="field">
-          <label for="contactName">Contact Name</label>
-          <input type="text" id="contactName" placeholder="e.g. Mark Wright">
-        </div>
-
-        <div class="field">
           <label for="trade">Trade / Industry <span style="color:#C0392B">*</span></label>
           <input type="text" id="trade" placeholder="e.g. double glazing, roofing, landscaping">
           <span class="hint">Be specific — this shapes the whole report</span>
         </div>
 
-        <div class="field">
-          <label for="location">Location <span style="color:#C0392B">*</span></label>
-          <input type="text" id="location" placeholder="e.g. Cheam, Surrey">
-          <span class="hint">Town + county works well</span>
-        </div>
-
         <div class="field full">
           <label for="website">Website URL</label>
-          <input type="text" id="website" placeholder="e.g. https://wrightglazing.co.uk (leave blank if none)">
-        </div>
-
-        <div class="field full">
-          <label for="notes">Additional Context</label>
-          <textarea id="notes" placeholder="Anything extra Claude should know — e.g. 'Found on Checkatrade with 80+ reviews. Family business, been trading 15 years. No Google Business Profile visible.'"></textarea>
-          <span class="hint">The more detail here, the sharper the report. Leave blank if none.</span>
+          <input type="text" id="website" placeholder="e.g. wrightglazing.co.uk (leave blank if none)">
         </div>
 
       </div>
@@ -553,18 +536,20 @@
 
   // ── Validation ─────────────────────────────────────────────────────────────
   function getFormData() {
+    let website = document.getElementById('website').value.trim();
+    // Auto-prepend https:// if a URL is entered but has no protocol
+    if (website && !/^https?:\/\//i.test(website)) {
+      website = 'https://' + website;
+    }
     return {
       businessName: document.getElementById('businessName').value.trim(),
-      contactName:  document.getElementById('contactName').value.trim(),
       trade:        document.getElementById('trade').value.trim(),
-      location:     document.getElementById('location').value.trim(),
-      website:      document.getElementById('website').value.trim(),
-      notes:        document.getElementById('notes').value.trim()
+      website:      website
     };
   }
 
   function validate(data) {
-    const required = ['businessName', 'trade', 'location'];
+    const required = ['businessName', 'trade'];
     let valid = true;
 
     // Clear previous errors
@@ -587,7 +572,7 @@
     const data = getFormData();
 
     if (!validate(data)) {
-      showStatus('error', '⚠ Please fill in Business Name, Trade, and Location before generating.');
+      showStatus('error', '⚠ Please fill in Business Name and Trade before generating.');
       return;
     }
 
