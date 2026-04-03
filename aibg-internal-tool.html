@@ -365,6 +365,37 @@
 
     .config-notice strong { color: #5C4000; }
 
+    /* ── Cache banner ───────────────────────────────────────────────────── */
+    .cache-banner {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,184,150,0.08);
+      border: 1px solid rgba(0,184,150,0.25);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12.5px;
+      color: #007A62;
+      margin-top: 16px;
+    }
+
+    .cache-banner.visible { display: flex; }
+
+    .cache-clear {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--muted);
+      cursor: pointer;
+      text-decoration: underline;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: 'DM Sans', sans-serif;
+      flex-shrink: 0;
+    }
+
+    .cache-clear:hover { color: var(--navy); }
+
     /* ── Footer ──────────────────────────────────────────────────────────── */
     .footer {
       text-align: center;
@@ -458,6 +489,14 @@
         </div>
 
       </div>
+
+      <!-- Cache indicator — shown when form is pre-filled from sessionStorage -->
+      <div class="cache-banner" id="cache-banner">
+        <span>📋</span>
+        <span id="cache-text">Form pre-filled from last session</span>
+        <button class="cache-clear" onclick="clearCache()">Clear</button>
+      </div>
+
     </div>
 
     <!-- Generate Card -->
@@ -511,6 +550,7 @@
       document.getElementById('password-screen').style.display = 'none';
       document.getElementById('app').style.display = 'block';
       checkConfig();
+      loadFromCache();
     } else {
       const err = document.getElementById('pw-error');
       err.style.display = 'block';
@@ -567,6 +607,49 @@
     return valid;
   }
 
+  // ── Session cache (sessionStorage — cleared when tab is closed) ────────────
+  const CACHE_KEY = 'aibg_prospect_cache';
+
+  function saveToCache(data) {
+    const entry = {
+      businessName: data.businessName,
+      trade:        data.trade,
+      website:      data.website,
+      savedAt:      new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+    };
+    sessionStorage.setItem(CACHE_KEY, JSON.stringify(entry));
+    updateCacheBanner(entry);
+  }
+
+  function loadFromCache() {
+    const raw = sessionStorage.getItem(CACHE_KEY);
+    if (!raw) return;
+    try {
+      const cached = JSON.parse(raw);
+      if (cached.businessName) document.getElementById('businessName').value = cached.businessName;
+      if (cached.trade)        document.getElementById('trade').value        = cached.trade;
+      if (cached.website)      document.getElementById('website').value      = cached.website;
+      updateCacheBanner(cached);
+    } catch (_) {
+      sessionStorage.removeItem(CACHE_KEY);
+    }
+  }
+
+  function updateCacheBanner(cached) {
+    const banner = document.getElementById('cache-banner');
+    document.getElementById('cache-text').textContent =
+      `Pre-filled: ${cached.businessName} · ${cached.trade} · saved at ${cached.savedAt}`;
+    banner.classList.add('visible');
+  }
+
+  function clearCache() {
+    sessionStorage.removeItem(CACHE_KEY);
+    document.getElementById('cache-banner').classList.remove('visible');
+    document.getElementById('businessName').value = '';
+    document.getElementById('trade').value        = '';
+    document.getElementById('website').value      = '';
+  }
+
   // ── Generate ───────────────────────────────────────────────────────────────
   async function generate(type) {
     const data = getFormData();
@@ -621,6 +704,7 @@
       URL.revokeObjectURL(url);
 
       showStatus('success', `✓ ${label} generated successfully for ${data.businessName} — check your Downloads folder.`);
+      saveToCache(data);
 
     } catch (err) {
       console.error(err);
