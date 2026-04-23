@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIBG Internal Tool</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1B3A5C;
+    --navy-dark: #122843;
+    --teal: #00B896;
+    --teal-light: #E6F9F5;
+    --grey-light: #EEF2F7;
+    --grey-mid: #6B7A8F;
+    --white: #ffffff;
+    --red: #E74C3C;
+    --amber: #F39C12;
+    --green: #27AE60;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f4f6f9;
+    color: #1a2535;
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+  h1, h2, h3 { font-family: 'Syne', sans-serif; }
+
+  /* ===== HEADER ===== */
+  .header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 24px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  }
+  .header-brand {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+  .header-brand span { color: var(--teal); }
+  .header-badge {
+    background: rgba(0,184,150,0.15);
+    color: var(--teal);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid rgba(0,184,150,0.3);
+  }
+
+  /* ===== CONTAINER ===== */
+  .container {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  .page-title {
+    font-size: 2rem;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .page-subtitle {
+    color: var(--grey-mid);
+    font-size: 1rem;
+    margin-bottom: 32px;
+  }
+
+  /* ===== FORM CARDS ===== */
+  .card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .card-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .card-subtitle {
+    color: var(--grey-mid);
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+  }
+  .divider {
+    height: 1px;
+    background: var(--grey-light);
+    margin: 0 0 24px 0;
+  }
+
+  /* ===== FORM FIELDS ===== */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .form-grid-full {
+    grid-column: 1 / -1;
+  }
+  .form-grid-thirds {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+  }
+  .field { margin-bottom: 0; }
+  .field label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .field label .required { color: var(--red); }
+  .field .help-text {
+    font-size: 0.75rem;
+    color: var(--grey-mid);
+    margin-top: 4px;
+    font-style: italic;
+  }
+  .field input[type="text"], .field input[type="number"], .field input[type="url"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d0d8e4;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--navy);
+    background: var(--white);
+    transition: border-color 0.15s;
+  }
+  .field input:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(0,184,150,0.1);
+  }
+  .field input::placeholder { color: #a8b3c4; }
+
+  /* ===== CHECKBOX ===== */
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .checkbox-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--teal);
+  }
+  .checkbox-row label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--navy);
+    cursor: pointer;
+    margin: 0;
+  }
+
+  /* ===== PRE-FILL NOTICE ===== */
+  .prefill-notice {
+    background: var(--teal-light);
+    border: 1px solid rgba(0,184,150,0.3);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    color: var(--navy);
+    margin-top: 16px;
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .prefill-notice.active { display: flex; }
+  .prefill-notice .notice-text { flex: 1; }
+  .prefill-clear {
+    background: none;
+    border: none;
+    color: var(--teal);
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 0.85rem;
+    font-family: inherit;
+  }
+
+  /* ===== DIRECTORY SUBHEADING ===== */
+  .directory-group {
+    border: 1px solid var(--grey-light);
+    border-radius: 8px;
+    padding: 20px;
+    background: #fafbfc;
+  }
+  .directory-group-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+
+  /* ===== GENERATE BUTTONS ===== */
+  .generate-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .generate-grid-full { grid-column: 1 / -1; }
+  .btn {
+    padding: 20px 24px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    text-align: center;
+    text-decoration: none;
+  }
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .btn-icon {
+    font-size: 1.4rem;
+    margin-bottom: 4px;
+  }
+  .btn-subtext {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.78rem;
+    opacity: 0.85;
+  }
+  .btn-audit {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .btn-audit:hover:not(:disabled) {
+    background: var(--navy-dark);
+    transform: translateY(-1px);
+  }
+  .btn-pitch {
+    background: var(--teal);
+    color: var(--white);
+  }
+  .btn-pitch:hover:not(:disabled) {
+    background: #00a183;
+    transform: translateY(-1px);
+  }
+  .btn-both {
+    background: var(--navy-dark);
+    color: var(--white);
+  }
+  .btn-both:hover:not(:disabled) {
+    background: #0a1628;
+    transform: translateY(-1px);
+  }
+
+  /* ===== STATUS MESSAGES ===== */
+  .status {
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-size: 0.95rem;
+    display: none;
+  }
+  .status.active { display: block; }
+  .status-loading {
+    background: rgba(27,58,92,0.08);
+    color: var(--navy);
+    border: 1px solid rgba(27,58,92,0.2);
+  }
+  .status-success {
+    background: rgba(39,174,96,0.1);
+    color: var(--green);
+    border: 1px solid rgba(39,174,96,0.3);
+  }
+  .status-error {
+    background: rgba(231,76,60,0.1);
+    color: var(--red);
+    border: 1px solid rgba(231,76,60,0.3);
+  }
+
+  @media (max-width: 720px) {
+    .form-grid, .form-grid-thirds, .generate-grid {
+      grid-template-columns: 1fr;
+    }
+    .container { padding: 24px 16px; }
+    .card { padding: 24px 20px; }
+    .header { padding: 20px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">AI Business<span> Growth</span></div>
+  <div class="header-badge">Internal Tool</div>
+</div>
+
+<div class="container">
+
+  <h1 class="page-title">Prospect Generator</h1>
+  <p class="page-subtitle">Enter the prospect's details below, then generate their Audit Report, Pitch Deck, or both.</p>
+
+  <!-- ================================================================ -->
+  <!-- PROSPECT DETAILS -->
+  <!-- ================================================================ -->
+  <div class="card">
+    <h2 class="card-title">Prospect Details</h2>
+    <div class="divider"></div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label for="businessName">Business Name <span class="required">*</span></label>
+        <input type="text" id="businessName" placeholder="e.g. Wright Glazing Ltd" required>
+      </div>
+      <div class="field">
+        <label for="trade">Trade / Industry <span class="required">*</span></label>
+        <input type="text" id="trade" placeholder="e.g. Glazier" required>
+        <p class="help-text">Be specific — this shapes the whole report</p>
+      </div>
+
+      <div class="field form-grid-full">
+        <label for="website">Website URL</label>
+        <input type="url" id="website" placeholder="e.g. https://wrightglazing.co.uk">
+      </div>
+
+      <div class="field form-grid-full">
+        <label for="location">Location (Optional)</label>
+        <input type="text" id="location" placeholder="e.g. Portsmouth, Hampshire">
+        <p class="help-text">If blank, we use the location from Google Places. Fill this in if Places has the wrong area or cannot find the business.</p>
+      </div>
+    </div>
+
+    <div id="prefillNotice" class="prefill-notice">
+      <span class="notice-text">📌 Pre-filled: <strong id="prefillSummary"></strong></span>
+      <button type="button" class="prefill-clear" onclick="clearPrefill()">Clear</button>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SOCIAL MEDIA -->
+  <!-- ================================================================ -->
+  <div class="card">
+    <h2 class="card-title">Social Media (Optional)</h2>
+    <p class="card-subtitle">Check the prospect's social profiles and enter what you find. Leave blank if unknown — the report will handle missing data automatically.</p>
+    <div class="divider"></div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label for="facebookFollowers">Facebook Followers</label>
+        <input type="number" id="facebookFollowers" placeholder="e.g. 1250">
+      </div>
+      <div class="field">
+        <label for="facebookPostsLast30Days">Facebook Posts (last 30 days)</label>
+        <input type="number" id="facebookPostsLast30Days" placeholder="e.g. 8">
+      </div>
+      <div class="field">
+        <label for="instagramFollowers">Instagram Followers</label>
+        <input type="number" id="instagramFollowers" placeholder="e.g. 3500">
+      </div>
+      <div class="field">
+        <label for="instagramPostsLast30Days">Instagram Posts (last 30 days)</label>
+        <input type="number" id="instagramPostsLast30Days" placeholder="e.g. 12">
+      </div>
+      <div class="field">
+        <label for="tiktokFollowers">TikTok Followers</label>
+        <input type="number" id="tiktokFollowers" placeholder="e.g. 800">
+      </div>
+      <div class="field">
+        <label for="tiktokPostsLast30Days">TikTok Posts (last 30 days)</label>
+        <input type="number" id="tiktokPostsLast30Days" placeholder="e.g. 5">
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- DIRECTORY LISTINGS -->
+  <!-- ================================================================ -->
+  <div class="card">
+    <h2 class="card-title">Directory Listings (Optional)</h2>
+    <p class="card-subtitle">Check each directory manually and enter what you find. Leave blank if not listed.</p>
+    <div class="divider"></div>
+
+    <div class="form-grid-thirds">
+
+      <div class="directory-group">
+        <div class="directory-group-title">Checkatrade</div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="checkatradeListed">
+          <label for="checkatradeListed">Listed on Checkatrade</label>
+        </div>
+        <div class="field" style="margin-bottom: 12px;">
+          <label for="checkatradeRating">Rating (out of 10)</label>
+          <input type="number" id="checkatradeRating" step="0.1" placeholder="e.g. 9.5">
+        </div>
+        <div class="field">
+          <label for="checkatradeReviews">Number of Reviews</label>
+          <input type="number" id="checkatradeReviews" placeholder="e.g. 47">
+        </div>
+      </div>
+
+      <div class="directory-group">
+        <div class="directory-group-title">TrustATrader</div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="trustATraderListed">
+          <label for="trustATraderListed">Listed on TrustATrader</label>
+        </div>
+        <div class="field" style="margin-bottom: 12px;">
+          <label for="trustATraderRating">Rating (out of 5)</label>
+          <input type="number" id="trustATraderRating" step="0.1" placeholder="e.g. 4.8">
+        </div>
+        <div class="field">
+          <label for="trustATraderReviews">Number of Reviews</label>
+          <input type="number" id="trustATraderReviews" placeholder="e.g. 23">
+        </div>
+      </div>
+
+      <div class="directory-group">
+        <div class="directory-group-title">Yell</div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="yellListed">
+          <label for="yellListed">Listed on Yell</label>
+        </div>
+        <div class="field" style="margin-bottom: 12px;">
+          <label for="yellRating">Rating (out of 5)</label>
+          <input type="number" id="yellRating" step="0.1" placeholder="e.g. 4.2">
+        </div>
+        <div class="field">
+          <label for="yellReviews">Number of Reviews</label>
+          <input type="number" id="yellReviews" placeholder="e.g. 12">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- GENERATE BUTTONS -->
+  <!-- ================================================================ -->
+  <div class="card">
+    <h2 class="card-title">Generate Files</h2>
+    <p class="card-subtitle">Generate them separately — you don't need both every time.</p>
+    <div class="divider"></div>
+
+    <div class="generate-grid">
+      <button type="button" class="btn btn-audit" id="btnAudit" onclick="generateReport('report')">
+        <span class="btn-icon">📄</span>
+        Generate Audit Report
+        <span class="btn-subtext">Downloads as .docx</span>
+      </button>
+      <button type="button" class="btn btn-pitch" id="btnPitch" onclick="generateReport('pitch')">
+        <span class="btn-icon">📊</span>
+        Generate Pitch Deck
+        <span class="btn-subtext">Downloads as .pptx</span>
+      </button>
+      <button type="button" class="btn btn-both generate-grid-full" id="btnBoth" onclick="generateReport('both')">
+        <span class="btn-icon">📦</span>
+        Generate Both Files
+        <span class="btn-subtext">Downloads as .zip</span>
+      </button>
+    </div>
+
+    <div id="status" class="status"></div>
+  </div>
+
+</div>
+
+<script>
+  // ===== CONFIG =====
+  const API_URL = 'https://web-production-345ce.up.railway.app';
+
+  // ===== PRE-FILL FROM URL =====
+  function applyPrefill() {
+    const params = new URLSearchParams(window.location.search);
+    const bn = params.get('businessName') || params.get('business');
+    const tr = params.get('trade');
+    if (bn) document.getElementById('businessName').value = bn;
+    if (tr) document.getElementById('trade').value = tr;
+    if (bn || tr) {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+      const summary = [bn, tr].filter(Boolean).join(' · ') + ` · saved at ${timeStr}`;
+      document.getElementById('prefillSummary').textContent = summary;
+      document.getElementById('prefillNotice').classList.add('active');
+    }
+  }
+  function clearPrefill() {
+    document.getElementById('businessName').value = '';
+    document.getElementById('trade').value = '';
+    document.getElementById('prefillNotice').classList.remove('active');
+    history.replaceState({}, '', window.location.pathname);
+  }
+  applyPrefill();
+
+  // ===== HELPERS =====
+  function getFormData() {
+    function num(id) {
+      const val = document.getElementById(id).value.trim();
+      return val === '' ? null : parseFloat(val);
+    }
+    function text(id) {
+      return document.getElementById(id).value.trim();
+    }
+    function check(id) {
+      return document.getElementById(id).checked;
+    }
+    return {
+      businessName: text('businessName'),
+      trade: text('trade'),
+      website: text('website'),
+      location: text('location'),
+      facebookFollowers: num('facebookFollowers'),
+      facebookPostsLast30Days: num('facebookPostsLast30Days'),
+      instagramFollowers: num('instagramFollowers'),
+      instagramPostsLast30Days: num('instagramPostsLast30Days'),
+      tiktokFollowers: num('tiktokFollowers'),
+      tiktokPostsLast30Days: num('tiktokPostsLast30Days'),
+      checkatradeListed: check('checkatradeListed'),
+      checkatradeRating: num('checkatradeRating'),
+      checkatradeReviews: num('checkatradeReviews'),
+      trustATraderListed: check('trustATraderListed'),
+      trustATraderRating: num('trustATraderRating'),
+      trustATraderReviews: num('trustATraderReviews'),
+      yellListed: check('yellListed'),
+      yellRating: num('yellRating'),
+      yellReviews: num('yellReviews'),
+    };
+  }
+
+  function setStatus(type, message) {
+    const el = document.getElementById('status');
+    el.className = 'status active status-' + type;
+    el.textContent = message;
+  }
+  function clearStatus() {
+    document.getElementById('status').className = 'status';
+  }
+  function setButtonsDisabled(disabled) {
+    document.getElementById('btnAudit').disabled = disabled;
+    document.getElementById('btnPitch').disabled = disabled;
+    document.getElementById('btnBoth').disabled = disabled;
+  }
+
+  // ===== GENERATE =====
+  async function generateReport(mode) {
+    const data = getFormData();
+    if (!data.businessName) { setStatus('error', 'Business Name is required.'); return; }
+    if (!data.trade) { setStatus('error', 'Trade / Industry is required.'); return; }
+
+    const modeLabel = mode === 'report' ? 'Audit Report' : mode === 'pitch' ? 'Pitch Deck' : 'Both Files';
+    setStatus('loading', `Generating ${modeLabel} for ${data.businessName}... Please wait.`);
+    setButtonsDisabled(true);
+
+    try {
+      const endpoint = mode === 'report' ? '/internal/report' : mode === 'pitch' ? '/internal/pitch' : '/internal/both';
+      const secretKey = prompt('Enter internal secret key:');
+      if (!secretKey) {
+        setStatus('error', 'Internal secret key is required.');
+        setButtonsDisabled(false);
+        return;
+      }
+
+      const response = await fetch(API_URL + endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-internal-key': secretKey },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Server returned ${response.status}: ${errText}`);
+      }
+
+      const blob = await response.blob();
+      const contentDisposition = response.headers.get('content-disposition') || '';
+      const filenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+      const safeName = data.businessName.replace(/[^a-z0-9]/gi, '_');
+      const defaultExt = mode === 'report' ? '_DigitalAudit.docx' : mode === 'pitch' ? '_AIPitchDeck.pptx' : '_AIBG_Pack.zip';
+      const filename = filenameMatch ? filenameMatch[1] : safeName + defaultExt;
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      setStatus('success', `✓ ${modeLabel} generated successfully for ${data.businessName} — check your Downloads folder.`);
+    } catch (err) {
+      console.error('Generation error:', err);
+      setStatus('error', `Error: ${err.message}`);
+    } finally {
+      setButtonsDisabled(false);
+    }
+  }
+</script>
+
+</body>
+</html>
